@@ -3,8 +3,8 @@ const { ApolloServer, gql } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const path = require('path');
 const db = require('./config/connection');
-const typeDefs = require('./graphql/schema');
-const resolvers = require('./graphql/resolvers');
+const typeDefs = require('./schemas/typeDefs');
+const resolvers = require('./schemas/resolvers');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
