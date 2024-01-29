@@ -1,9 +1,17 @@
 // Import your models
-const {User} = require('../models');
+const { User } = require('../models');
 
 const resolvers = {
   Query: {
-    // Implement your query resolvers here, if any
+    me: async (_, __, context) => {
+      if (context.user) {
+        // If there is an authenticated user in the context, return the user
+        return await User.findById(context.user._id);
+      } else {
+        // If no authenticated user, return null or handle it as needed
+        return null;
+      }
+    },
   },
   Mutation: {
     addUser: async (_, { username, email, password }) => {
