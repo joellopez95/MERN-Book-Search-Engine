@@ -31,8 +31,6 @@ const SearchBooks = () => {
     return () => saveBookIds(savedBookIds);
   });
 
-  const authService = Auth; // Use the AuthService
-
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -67,13 +65,12 @@ const SearchBooks = () => {
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
-    if (!authService.loggedIn()) {
-      // Redirect to the login page or show a message
-      console.log("User not logged in. Redirecting to login page...");
-      return;
-    }
-
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+    if (!token) {
+      return false;
+    }
 
     try {
       const { data } = await saveBook({
@@ -88,7 +85,7 @@ const SearchBooks = () => {
 
   return (
     <>
-      <div className="text-light bg-dark p-5">
+      <div fluid className="text-light bg-dark p-5">
         <Container>
           <h1>Search for Books!</h1>
           <Form onSubmit={handleFormSubmit}>
