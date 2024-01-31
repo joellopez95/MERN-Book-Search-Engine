@@ -11,7 +11,7 @@ import {
 import Auth from '../utils/auth';
 //import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
-import { useMutation } from "@apollo/client";
+import { useMutation} from '@apollo/client';
 import { SAVE_BOOK } from "../utils/mutations";
 
 const SearchBooks = () => {
@@ -29,7 +29,7 @@ const SearchBooks = () => {
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
-  });
+  }, [savedBookIds, saveBook]);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -47,7 +47,6 @@ const SearchBooks = () => {
       if (!response.ok) {
         throw new Error('Something went wrong!');
       }
-
 
       const { items } = await response.json();
 
@@ -70,21 +69,33 @@ const SearchBooks = () => {
   const handleSaveBook = async (bookId) => {
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-
+  
     if (!token) {
       return false;
     }
-
+  
+    console.log('Book to save:', bookToSave);
+  
     try {
-      const { data } = await saveBook({
-        variables: { newBook: { ...bookToSave } },
+      await saveBook({
+        variables: {
+          book: {
+            _id: bookToSave.bookId, // Assuming `bookId` is the correct field
+            title: bookToSave.title,
+            authors: bookToSave.authors,
+            description: bookToSave.description,
+            // ... other fields
+          }
+        },
       });
-
+  
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
-      console.error(err);
+      console.error('GraphQL error:', err.message);
     }
   };
+  
+  
 
   return (
     <>

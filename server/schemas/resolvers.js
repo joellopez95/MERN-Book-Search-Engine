@@ -51,7 +51,6 @@ const { signToken, AuthenticationError } = require('../utils/auth');
           { $pull: { savedBooks:{bookId } }},
           { new: true }
         );
-        return updatedUser;
       }
       throw AuthenticationError;
     },
